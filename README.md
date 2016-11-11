@@ -13,4 +13,13 @@
 
 - sudo /usr/local/nginx/sbin/nginx
 - ./picam -o /run/shm/hls
-- ffmpeg -i index.m3u8 -c copy -bsf:a aac_adtstoasc -f flv rtmp://192.168.X.X/webcam/mystream
+- ffmpeg -i index.m3u8 -c copy -bsf:a aac_adtstoasc -f flv rtmp://192.168.X.X:1935/webcam/mystream
+
+# Add to your /etc/rc.local file to start on boot
+- sudo /usr/local/nginx/sbin/nginx
+- sudo rm -f /home/pi/picam/hooks/subtitle
+- sudo touch /home/pi/picam/hooks/subtitle
+- sudo chown pi:pi /home/pi/picam/hooks/subtitle
+- echo "text=Baby Hannah's Monitor" > /home/pi/picam/hooks/subtitle
+- /home/pi/picam/picam --alsadev hw:1,0 -o /run/shm/hls &
+- ffmpeg -i /run/shm/hls/index.m3u8 -c copy -bsf:a aac_adtstoasc -f flv rtmp://127.0.0.1:1935/webcam/mystream &
